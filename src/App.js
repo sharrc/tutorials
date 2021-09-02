@@ -97,7 +97,7 @@ function App() {
       showStatus(P2_WIN);
     }
     // console.log(diagString2);
-  }, [grid]);
+  }, [grid, showStatus]);
 
   const handleClick = useCallback(
     (i, j) => {
@@ -111,14 +111,27 @@ function App() {
       toggleTurn();
       checkStatus();
     },
-    [grid, turn, status]
+    [grid, turn, status, checkStatus]
   );
 
   const renderIcon = (value) => {
     if (!value) return null;
-    if (value === "X") return <img className="icon" src="/assets/heart.png" />;
+    if (value === "X")
+      return (
+        <img
+          className="icon"
+          src="/assets/heart.png"
+          alt="p1 icon sharrc tutorials"
+        />
+      );
     if (value === "O")
-      return <img className="icon" src="/assets/golden-apple.png" />;
+      return (
+        <img
+          className="icon"
+          src="/assets/golden-apple.png"
+          alt="p2 icon sharrc tutorials"
+        />
+      );
   };
 
   return (
@@ -130,7 +143,11 @@ function App() {
         height: "100vh",
       }}
     >
-      <img style={{ height: "700px" }} src="/assets/crafting-table.png" />
+      <img
+        style={{ height: "700px" }}
+        src="/assets/crafting-table.png"
+        alt="crafting table sharrc tutorials"
+      />
       <div className="grid-container">
         {grid.map((row, rowI) => (
           <div className="grid-row">
