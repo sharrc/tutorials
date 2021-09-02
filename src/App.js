@@ -27,14 +27,14 @@ function App() {
 
   const clearBoard = () => setGrid(blank());
 
-  const showStatus = (message) => {
+  const showStatus = useCallback((message) => {
     console.log("show status:", message);
     setStatus(message);
     setTimeout(() => {
       setStatus(false);
       clearBoard();
     }, 4000);
-  };
+  }, []);
 
   const checkStatus = useCallback(() => {
     const rotated = grid[0].map((val, index) =>
