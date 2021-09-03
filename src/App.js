@@ -1,170 +1,150 @@
 import { useCallback, useState } from "react";
+const apple = require("./assets/golden-apple.png").default;
+const heart = require("./assets/heart.png").default;
 
-const BLANK_BOARD = [
+const BLANK = [
   [0, 0, 0],
   [0, 0, 0],
   [0, 0, 0],
 ];
 
 const blank = () => {
-  return BLANK_BOARD.map((arr) => arr.slice());
+  return BLANK.map((row) => row.slice());
 };
 
-const P1_WIN = "P1 wins the game!";
-const P2_WIN = "P2 wins the game!";
+export default function App() {
+  const [grid, setGrid] = useState(blank()); // Main grid
+  const [turn, setTurn] = useState("X"); // To hold the turn of current player
+  const [status, setStatus] = useState(false); // The state of the game: e.g. Won, Draw
 
-function App() {
-  const [grid, setGrid] = useState(blank());
-  // spread operator only does a shallow copy, we have nested arrays we need to deep copy the arrays.
-  const [turn, setTurn] = useState("X");
-  const [status, setStatus] = useState(false);
-  console.log(status, BLANK_BOARD);
   const toggleTurn = () => setTurn((prev) => (prev === "X" ? "O" : "X"));
 
-  // 0 -> blank
-  // 1 -> X
-  // 2 -> O
+  const clearBoard = () => {
+    setGrid(blank());
+    setStatus(false);
+  };
 
-  const clearBoard = () => setGrid(blank());
-
-  const showStatus = useCallback((message) => {
-    console.log("show status:", message);
-    setStatus(message);
+  const p1Wins = () => {
+    setStatus("X WON");
     setTimeout(() => {
-      setStatus(false);
       clearBoard();
     }, 4000);
-  }, []);
+  };
+
+  const p2Wins = () => {
+    setStatus("O WON");
+    setTimeout(() => {
+      clearBoard();
+    }, 4000);
+  };
 
   const checkStatus = useCallback(() => {
+    // 8 checks: 3 horizontal + 3 vertical + 2 diagonal
+
     const rotated = grid[0].map((val, index) =>
       grid.map((row) => row[index]).reverse()
     );
-    // Total of 8 scenarios => 3 horizontal + 3 vertical + 2 diagonal
 
-    // Horizontal checks
+    // Horizontal
     for (let i = 0; i < grid.length; i += 1) {
       const row = grid[i];
       const stringified = JSON.stringify(row);
+
+      console.log("Horizontal:", stringified);
+
       if (stringified === '["X","X","X"]') {
-        showStatus(P1_WIN);
+        p1Wins();
       } else if (stringified === '["O","O","O"]') {
-        showStatus(P2_WIN);
+        p2Wins();
       }
     }
 
-    // Vertical checks
+    // Vertical
     for (let i = 0; i < rotated.length; i += 1) {
       const row = rotated[i];
       const stringified = JSON.stringify(row);
+
+      console.log("Vertical:", stringified);
+
       if (stringified === '["X","X","X"]') {
-        showStatus(P1_WIN);
+        p1Wins();
       } else if (stringified === '["O","O","O"]') {
-        showStatus(P2_WIN);
+        p2Wins();
       }
     }
 
-    // Diagonal check 1
-    let diagString = "";
+    // Diagonal 1
+    let d1String = "";
     for (let i = 0; i < grid.length; i += 1) {
       const row = grid[i];
       for (let j = 0; j < row.length; j += 1) {
-        if (j !== i) continue;
-        const col = row[j];
-        diagString += col;
+        if (i !== j) continue;
+        d1String += row[j];
       }
     }
-    if (diagString === "XXX") {
-      showStatus(P1_WIN);
-    } else if (diagString === "OOO") {
-      showStatus(P2_WIN);
+
+    if (d1String === "XXX") {
+      p1Wins();
+    } else if (d1String === "OOO") {
+      p2Wins();
     }
 
-    // Diagonal check 2
-    let diagString2 = "";
+    // Diagonal 2
+    let d2String = "";
     for (let i = 0; i < grid.length; i += 1) {
       const row = grid[i];
       for (let j = 0; j < row.length; j += 1) {
         if (i + j !== 2) continue;
-        const col = row[j];
-        // console.log("Col:", col);
-        diagString2 += col;
+        d2String += row[j];
       }
     }
-    if (diagString2 === "XXX") {
-      showStatus(P1_WIN);
-    } else if (diagString2 === "OOO") {
-      showStatus(P2_WIN);
+
+    if (d2String === "XXX") {
+      p1Wins();
+    } else if (d2String === "OOO") {
+      p2Wins();
     }
-    // console.log(diagString2);
-  }, [grid, showStatus]);
+  }, [grid]);
 
   const handleClick = useCallback(
     (i, j) => {
-      if (status) return; // To return if someone has won already
-      // i -> Row index
-      // j -> Col index
       const newGrid = [...grid];
+      if (status) return;
       if (newGrid[i][j]) return;
       newGrid[i][j] = turn;
-      setGrid([...newGrid]);
+      setGrid(newGrid);
       toggleTurn();
       checkStatus();
     },
-    [grid, turn, status, checkStatus]
+    [grid, turn, status]
   );
 
-  const renderIcon = (value) => {
-    if (!value) return null;
-    if (value === "X")
-      return (
-        <img
-          className="icon"
-          src="/assets/heart.png"
-          alt="p1 icon sharrc tutorials"
-        />
-      );
-    if (value === "O")
-      return (
-        <img
-          className="icon"
-          src="/assets/golden-apple.png"
-          alt="p2 icon sharrc tutorials"
-        />
-      );
+  const renderBtn = (value) => {
+    if (value === "X") {
+      return <img className="icon" src={apple} />;
+    }
+    if (value === "O") {
+      return <img className="icon" src={heart} />;
+    }
+    return null;
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <img
-        style={{ height: "700px" }}
-        src="/assets/crafting-table.png"
-        alt="crafting table sharrc tutorials"
-      />
-      <div className="grid-container">
-        {grid.map((row, rowI) => (
-          <div className="grid-row">
-            {row.map((col, colI) => (
-              <button
-                disabled={col !== 0}
-                onClick={() => handleClick(rowI, colI)}
-              >
-                {renderIcon(col)}
-              </button>
-            ))}
-          </div>
-        ))}
+    <div className="container">
+      <div className="content">
+        <div className="grid">
+          {grid.map((row, i) => (
+            <div className="row">
+              {row.map((col, j) => (
+                <button onClick={() => handleClick(i, j)}>
+                  {renderBtn(col)}
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
-      <div className={`status ${status ? "show" : "hide"}`}>{status}</div>
+      <div className={`status ${status ? "show" : ""}`}>{status}</div>
     </div>
   );
 }
-
-export default App;

@@ -8,53 +8,56 @@ body {
   background: #edf6f9;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.grid-container {
-  position: absolute;
+.content {
+  background-image: url("./assets/crafting-table.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 700px;
+  height: 700px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.grid-row {
+.row {
   display: flex;
 }
 
-.grid-row button {
+.grid button {
+  width: 100px;
+  height: 100px;
+  margin: 14px;
   background: none;
   border: none;
-  width: 105px;
-  height: 105px;
-  margin: 14px;
-  font-weight: bold;
-  font-size: 24px;
 }
 
-.grid-row button:hover:not(:disabled) {
+.grid button:hover {
   background: rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
 
 .icon {
-  width: 60%;
-  height: 100%;
-  object-fit: contain;
+  width: 80%;
 }
 
 .status {
   position: absolute;
   font-size: 100px;
   font-weight: bold;
-  color: white;
   font-family: "ZCOOL KuaiLe", sans-serif;
+  color: white;
   text-shadow: 3px 3px 10px black;
-  /* animation-play-state: paused; */
 }
 
 .show {
   animation: zoom 4s forwards;
-  /* animation-play-state: running; */
 }
 
 @keyframes zoom {
